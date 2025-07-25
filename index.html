@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Utama</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-image: url('https://files.catbox.moe/hq32h2.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: white;
+            padding-top: 80px;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+
+        .menu-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: -300px;
+            width: 280px;
+            height: calc(100vh - 60px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background-color: rgba(255, 255, 255, 0.15);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            transition: left 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-item {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .sidebar-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            color: #1e40af;
+        }
+
+        .card-title i {
+            margin-right: 10px;
+            color: #93c5fd;
+        }
+
+        .time-display {
+            font-size: 3rem;
+            font-weight: 300;
+            text-align: center;
+            letter-spacing: 2px;
+            color: #1e40af;
+        }
+
+        .date-display {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-top: 10px;
+            opacity: 0.9;
+            color: #bfdbfe;
+        }
+
+        .battery-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .battery-item {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .battery-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 5px 0;
+            color: #1e40af;
+        }
+
+        .battery-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            color: #bfdbfe;
+        }
+
+        .visitor-count {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1e40af;
+            margin: 10px 0;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 998;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .contact-form {
+            background-color: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .form-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1e40af;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #bfdbfe;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(30, 64, 175, 0.5);
+            background-color: #f0f8ff;
+            color: #1e40af;
+            font-size: 16px;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(30, 64, 175, 0.7);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #1e40af;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #1e3a8a;
+        }
+
+        /* Statistik Page */
+        .stats-container {
+            background-color: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            color: #1e40af;
+        }
+
+        .stats-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #1e40af;
+        }
+
+        .stats-period {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 25px;
+            color: #93c5fd;
+        }
+
+        .stats-item {
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #f0f8ff;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .stats-label {
+            font-weight: 500;
+        }
+
+        .stats-value {
+            font-weight: bold;
+        }
+
+        /* Settings Page */
+        .settings-container {
+            background-color: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            color: #1e40af;
+        }
+
+        .settings-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #1e40af;
+        }
+
+        .setting-group {
+            margin-bottom: 20px;
+        }
+
+        .setting-label {
+            font-weight: 500;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .setting-select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(30, 64, 175, 0.5);
+            background-color: #f0f8ff;
+            color: #1e40af;
+            font-size: 16px;
+        }
+
+        /* About Page */
+        .about-container {
+            background-color: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            color: #1e40af;
+        }
+
+        .about-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #1e40af;
+        }
+
+        .about-content {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .social-links {
+            margin-top: 20px;
+        }
+
+        .social-item {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #f0f8ff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .social-item i {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        /* Login/Register Form */
+        .auth-form {
+            background-color: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            color: #1e40af;
+        }
+
+        .auth-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #1e40af;
+        }
+
+        .form-switch {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-switch button {
+            background: none;
+            border: none;
+            color: #1e40af;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+        .form-switch button.active {
+            border-bottom: 2px solid #1e40af;
+        }
+
+        /* WhatsApp Button */
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .battery-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <button class="menu-btn" id="menuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <img src="https://files.catbox.moe/eypxei.jpeg" alt="Profile" class="profile-img">
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-item" data-page="home">
+            <i class="fas fa-home"></i>
+            <span>Beranda</span>
+        </div>
+        <div class="sidebar-item" data-page="stats">
+            <i class="fas fa-chart-bar"></i>
+            <span>Statistik</span>
+        </div>
+        <div class="sidebar-item" data-page="settings">
+            <i class="fas fa-cog"></i>
+            <span>Pengaturan</span>
+        </div>
+        <div class="sidebar-item" data-page="auth">
+            <i class="fas fa-user"></i>
+            <span>Login/Daftar</span>
+        </div>
+        <div class="sidebar-item" data-page="about">
+            <i class="fas fa-info-circle"></i>
+            <span>Tentang</span>
+        </div>
+        <div class="sidebar-item" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Keluar</span>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/6282245682288" class="whatsapp-btn" id="whatsappBtn" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Main Content -->
+    <div class="container" id="mainContainer">
+        <!-- Jam Card -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-clock"></i>
+                <span>Waktu Sekarang</span>
+            </div>
+            <div class="time-display" id="timeDisplay">00:00:00</div>
+            <div class="date-display" id="dateDisplay">Senin, 1 Januari 2023</div>
+        </div>
+
+        <!-- Battery Info Card -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-battery-full"></i>
+                <span>Informasi Baterai</span>
+            </div>
+            <div class="battery-info">
+                <div class="battery-item">
+                    <div class="battery-label">Level Baterai</div>
+                    <div class="battery-value" id="batteryLevel">--%</div>
+                </div>
+                <div class="battery-item">
+                    <div class="battery-label">Status</div>
+                    <div class="battery-value" id="batteryStatus">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visitor Card -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-users"></i>
+                <span>Visitor</span>
+            </div>
+            <div class="visitor-count" id="visitorCount">0</div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form">
+            <div class="form-title">
+                <i class="fas fa-envelope"></i>
+                <span>Kirim Pesan</span>
+            </div>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Nama</label>
+                    <input type="text" id="name" placeholder="Masukkan nama Anda" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Masukkan email Anda" required>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Kirim ke jovianalfarizal@gmail.com</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentPage = 'home';
+        let visitCount = parseInt(localStorage.getItem('visitCount')) || 0;
+        visitCount++;
+        localStorage.setItem('visitCount', visitCount);
+
+        // Update waktu real-time
+        function updateTime() {
+            const now = new Date();
+            const timeDisplay = document.getElementById('timeDisplay');
+            const dateDisplay = document.getElementById('dateDisplay');
+            
+            // Format waktu
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            timeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // Format tanggal
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            
+            const dayName = days[now.getDay()];
+            const date = now.getDate();
+            const monthName = months[now.getMonth()];
+            const year = now.getFullYear();
+            
+            dateDisplay.textContent = `${dayName}, ${date} ${monthName} ${year}`;
+        }
+
+        // Coba mendapatkan informasi baterai
+        function getBatteryInfo() {
+            if ('getBattery' in navigator) {
+                navigator.getBattery().then(function(battery) {
+                    updateBatteryInfo(battery);
+                    
+                    // Event listeners untuk perubahan baterai
+                    battery.addEventListener('chargingchange', function() {
+                        updateBatteryInfo(battery);
+                    });
+                    
+                    battery.addEventListener('levelchange', function() {
+                        updateBatteryInfo(battery);
+                    });
+                }).catch(function(error) {
+                    console.error('Error getting battery info:', error);
+                    document.getElementById('batteryLevel').textContent = 'Tidak Tersedia';
+                    document.getElementById('batteryStatus').textContent = 'Error';
+                });
+            } else {
+                document.getElementById('batteryLevel').textContent = 'Tidak Didukung';
+                document.getElementById('batteryStatus').textContent = 'Browser Tidak Mendukung';
+            }
+        }
+
+        function updateBatteryInfo(battery) {
+            const level = Math.round(battery.level * 100);
+            const isCharging = battery.charging;
+            
+            document.getElementById('batteryLevel').textContent = `${level}%`;
+            document.getElementById('batteryStatus').textContent = isCharging ? 'Mengisi' : 'Tidak Mengisi';
+        }
+
+        // Simulasi visitor count
+        function updateVisitorCount() {
+            // Simulasi angka visitor acak antara 1-100
+            const randomVisitors = Math.floor(Math.random() * 100) + 1;
+            document.getElementById('visitorCount').textContent = randomVisitors;
+        }
+
+        // Toggle sidebar
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        menuBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            
+            // Di sini biasanya akan mengirim data ke server
+            // Untuk demo, kita hanya menampilkan alert
+            alert(`Terima kasih ${name}!\nPesan Anda akan dikirim ke jovianalfarizal@gmail.com\nEmail: ${email}`);
+            
+            // Reset form
+            this.reset();
+        });
+
+        // Sidebar navigation
+        document.querySelectorAll('.sidebar-item[data-page]').forEach(item => {
+            item.addEventListener('click', function() {
+                const page = this.getAttribute('data-page');
+                showPage(page);
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        });
+
+        // Logout function
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                window.close();
+            }
+        });
+
+        // Show specific page
+        function showPage(page) {
+            currentPage = page;
+            const container = document.getElementById('mainContainer');
+            
+            switch(page) {
+                case 'home':
+                    showHomePage(container);
+                    break;
+                case 'stats':
+                    showStatsPage(container);
+                    break;
+                case 'settings':
+                    showSettingsPage(container);
+                    break;
+                case 'auth':
+                    showAuthPage(container);
+                    break;
+                case 'about':
+                    showAboutPage(container);
+                    break;
+            }
+            
+            // Show/hide WhatsApp button based on user status
+            const whatsappBtn = document.getElementById('whatsappBtn');
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                whatsappBtn.style.display = 'flex';
+            } else {
+                whatsappBtn.style.display = 'none';
+            }
+        }
+
+        function showHomePage(container) {
+            container.innerHTML = `
+                <!-- Jam Card -->
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-clock"></i>
+                        <span>Waktu Sekarang</span>
+                    </div>
+                    <div class="time-display" id="timeDisplay">00:00:00</div>
+                    <div class="date-display" id="dateDisplay">Senin, 1 Januari 2023</div>
+                </div>
+
+                <!-- Battery Info Card -->
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-battery-full"></i>
+                        <span>Informasi Baterai</span>
+                    </div>
+                    <div class="battery-info">
+                        <div class="battery-item">
+                            <div class="battery-label">Level Baterai</div>
+                            <div class="battery-value" id="batteryLevel">--%</div>
+                        </div>
+                        <div class="battery-item">
+                            <div class="battery-label">Status</div>
+                            <div class="battery-value" id="batteryStatus">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visitor Card -->
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-users"></i>
+                        <span>Visitor</span>
+                    </div>
+                    <div class="visitor-count" id="visitorCount">0</div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="contact-form">
+                    <div class="form-title">
+                        <i class="fas fa-envelope"></i>
+                        <span>Kirim Pesan</span>
+                    </div>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Nama</label>
+                            <input type="text" id="name" placeholder="Masukkan nama Anda" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" placeholder="Masukkan email Anda" required>
+                        </div>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Kirim ke jovianalfarizal@gmail.com</span>
+                        </button>
+                    </form>
+                </div>
+            `;
+            
+            // Reattach event listeners
+            document.getElementById('contactForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                alert(`Terima kasih ${name}!\nPesan Anda akan dikirim ke jovianalfarizal@gmail.com\nEmail: ${email}`);
+                this.reset();
+            });
+            
+            // Update time and other data
+            updateTime();
+            getBatteryInfo();
+            updateVisitorCount();
+        }
+
+        function showStatsPage(container) {
+            const now = new Date();
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const currentMonth = months[now.getMonth()];
+            const currentYear = now.getFullYear();
+            
+            container.innerHTML = `
+                <div class="stats-container">
+                    <div class="stats-title">Statistik</div>
+                    <div class="stats-period">Periode: ${currentMonth} ${currentYear}</div>
+                    
+                    <div class="stats-item">
+                        <span class="stats-label">Jumlah Permintaan:</span>
+                        <span class="stats-value">${visitCount} kali</span>
+                    </div>
+                    
+                    <div class="stats-item">
+                        <span class="stats-label">Nomor Aktif:</span>
+                        <span class="stats-value">${Math.floor(Math.random() * 50) + 1} orang</span>
+                    </div>
+                    
+                    <div class="stats-item">
+                        <span class="stats-label">Rata-rata Respon:</span>
+                        <span class="stats-value">${Math.floor(Math.random() * 100) + 50} ms</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showSettingsPage(container) {
+            const fonts = [
+                'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
+                'Arial, Helvetica, sans-serif',
+                'Times New Roman, Times, serif',
+                'Courier New, Courier, monospace',
+                'Georgia, serif',
+                'Verdana, Geneva, sans-serif',
+                'Impact, Charcoal, sans-serif',
+                'Comic Sans MS, cursive, sans-serif',
+                'Trebuchet MS, Helvetica, sans-serif',
+                'Arial Black, Gadget, sans-serif'
+            ];
+            
+            const languages = [
+                'Indonesia',
+                'English',
+                'Spanish',
+                'French',
+                'German',
+                'Japanese',
+                'Korean',
+                'Chinese',
+                'Russian',
+                'Arabic'
+            ];
+            
+            container.innerHTML = `
+                <div class="settings-container">
+                    <div class="settings-title">Pengaturan</div>
+                    
+                    <div class="setting-group">
+                        <label class="setting-label">Mode Tampilan</label>
+                        <select class="setting-select" id="themeSelect">
+                            <option value="light">Terang</option>
+                            <option value="dark">Gelap</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label class="setting-label">Font Tampilan</label>
+                        <select class="setting-select" id="fontSelect">
+                            ${fonts.map(font => `<option value="${font}">${font.split(',')[0]}</option>`).join('')}
+                        </select>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label class="setting-label">Bahasa</label>
+                        <select class="setting-select" id="languageSelect">
+                            ${languages.map(lang => `<option value="${lang}">${lang}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners for settings
+            document.getElementById('themeSelect').addEventListener('change', function() {
+                alert('Pengaturan tema akan diterapkan setelah refresh');
+            });
+            
+            document.getElementById('fontSelect').addEventListener('change', function() {
+                alert('Pengaturan font akan diterapkan setelah refresh');
+            });
+            
+            document.getElementById('languageSelect').addEventListener('change', function() {
+                alert('Pengaturan bahasa akan diterapkan setelah refresh');
+            });
+        }
+
+        function showAuthPage(container) {
+            container.innerHTML = `
+                <div class="auth-form">
+                    <div class="auth-title">Login/Daftar</div>
+                    
+                    <div class="form-switch">
+                        <button class="form-switch-btn active" id="loginBtn">Login</button>
+                        <button class="form-switch-btn" id="registerBtn">Daftar</button>
+                    </div>
+                    
+                    <form id="authForm">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" placeholder="Masukkan username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="authEmail">Email</label>
+                            <input type="email" id="authEmail" placeholder="Masukkan email" required>
+                        </div>
+                        <button type="submit" class="submit-btn" id="authSubmitBtn">
+                            <span>Login</span>
+                        </button>
+                    </form>
+                </div>
+            `;
+            
+            // Form switch functionality
+            document.getElementById('loginBtn').addEventListener('click', function() {
+                document.querySelectorAll('.form-switch-btn').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('authSubmitBtn').innerHTML = '<span>Login</span>';
+            });
+            
+            document.getElementById('registerBtn').addEventListener('click', function() {
+                document.querySelectorAll('.form-switch-btn').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('authSubmitBtn').innerHTML = '<span>Daftar</span>';
+            });
+            
+            // Auth form submission
+            document.getElementById('authForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const email = document.getElementById('authEmail').value;
+                
+                // Simulate successful login/registration
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('username', username);
+                localStorage.setItem('email', email);
+                
+                alert(`${document.querySelector('.form-switch-btn.active').textContent === 'Login' ? 'Login' : 'Pendaftaran'} berhasil!`);
+                
+                // Show WhatsApp button
+                document.getElementById('whatsappBtn').style.display = 'flex';
+                
+                // Go back to home
+                showPage('home');
+            });
+        }
+
+        function showAboutPage(container) {
+            container.innerHTML = `
+                <div class="about-container">
+                    <div class="about-title">Tentang Saya</div>
+                    
+                    <div class="about-content">
+                        <p>Saya seorang pemuda kreatif dari Indonesia yang suka ngulik teknologi dan seni visual. Dunia coding dan editing adalah tempat saya menyalurkan rasa penasaran dan cerita yang ingin dibagikan.</p>
+                        
+                        <p>Saya mulai belajar edit video sejak SMP, lalu merambah ke dunia bot sejak 2024. Selain itu, saya juga suka menulis cerita, mendesain, dan membantu teman-teman yang butuh sistem otomatis.</p>
+                        
+                        <p>Saat ini saya masih belajar dan tumbuh. Tapi saya percaya, proses dan konsistensi adalah jalan menuju karya yang bermakna.</p>
+                    </div>
+                    
+                    <div class="social-links">
+                        <div class="social-item">
+                            <i class="fab fa-github"></i>
+                            <span>GitHub: github.com/joo1alaricc</span>
+                        </div>
+                        <div class="social-item">
+                            <i class="fab fa-instagram"></i>
+                            <span>Instagram: arxhillie</span>
+                        </div>
+                        <div class="social-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>Kontak: rizaladitia587@gmail.com</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update time and other data
+            updateTime();
+            setInterval(updateTime, 1000);
+            getBatteryInfo();
+            updateVisitorCount();
+            setInterval(updateVisitorCount, 5000); // Update visitor count setiap 5 detik
+            
+            // Check if user is logged in
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                document.getElementById('whatsappBtn').style.display = 'flex';
+            }
+        });
+    </script>
+</body>
+</html>
